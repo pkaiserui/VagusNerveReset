@@ -1,5 +1,7 @@
 import { Practice, PracticeType } from '@/lib/types'
 
+export type { PracticeType }
+
 export const PRACTICES: Practice[] = [
   // Daily Mood Record
   {

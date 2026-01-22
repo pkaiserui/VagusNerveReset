@@ -174,7 +174,7 @@ export default function InsightsPage() {
                   {Object.entries(practiceCounts).map(([type, count]) => (
                     <div key={type} className="flex justify-between text-sm">
                       <span className="text-text-secondary capitalize">{type.replace('_', ' ')}</span>
-                      <span className="font-semibold text-foreground">{count}</span>
+                      <span className="font-semibold text-foreground">{count as number}</span>
                     </div>
                   ))}
                 </div>

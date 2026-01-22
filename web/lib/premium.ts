@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import type { PremiumStatus } from './premium-client'
 
 // Re-export type for convenience
 export type { PremiumStatus } from './premium-client'

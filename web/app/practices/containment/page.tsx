@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
@@ -9,7 +9,7 @@ import PracticeTimer from '@/components/PracticeTimer'
 
 const CONTAINMENT_PRACTICES = getPracticesByType('containment')
 
-export default function ContainmentPage() {
+function ContainmentContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const variant = searchParams.get('variant')
@@ -138,5 +138,17 @@ export default function ContainmentPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function ContainmentPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-text-secondary">Loading...</div>
+      </div>
+    }>
+      <ContainmentContent />
+    </Suspense>
   )
 }
