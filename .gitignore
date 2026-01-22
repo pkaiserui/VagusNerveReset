@@ -1,0 +1,90 @@
+# Environment Variables & Secrets
+# ================================
+# Never commit files containing actual API keys, secrets, or credentials
+
+# Environment files (all locations)
+.env
+.env.local
+.env.*.local
+.env.production
+.env.development
+.env.test
+*.env
+!.env.example
+!.env*.example
+
+# Supabase environment files
+supabase/.env
+supabase/.env.local
+supabase/.env.*.local
+
+# iOS Configuration files that may contain secrets
+# Note: Config.swift files should use environment variables or be gitignored
+ios/**/Config.swift
+ios/**/*Config*.swift
+!ios/**/Config.example.swift
+
+# Common secret file patterns (be specific to avoid false positives)
+**/.secrets
+**/secrets.json
+**/secrets.yaml
+**/secrets.yml
+**/api-keys.json
+**/credentials.json
+**/private-keys/
+**/service-account*.json
+
+# Certificates & Private Keys
+*.pem
+*.key
+*.p12
+*.pfx
+*.cer
+*.crt
+*.cert
+*.keystore
+*.jks
+id_rsa
+id_rsa.pub
+id_dsa
+id_ed25519
+*.private
+
+# Supabase local development
+supabase/.temp/
+supabase/.branches/
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+*~
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+*.swn
+.project
+.classpath
+.settings/
+
+# Logs
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+tmp/
+temp/
