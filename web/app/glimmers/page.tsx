@@ -8,7 +8,6 @@ import { Glimmer } from '@/lib/types'
 
 export default function GlimmersPage() {
   const router = useRouter()
-  const supabase = createClient()
   const [glimmers, setGlimmers] = useState<Glimmer[]>([])
   const [loading, setLoading] = useState(true)
   const [isPremium, setIsPremium] = useState(false)
@@ -18,38 +17,33 @@ export default function GlimmersPage() {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    loadGlimmers()
-    checkPremium()
+    // Only run in browser
+    if (typeof window === 'undefined') return
+    
+    const supabase = createClient()
+    loadGlimmers(supabase)
+    checkPremium(supabase)
   }, [])
 
-  async function checkPremium() {
+  async function checkPremium(supabase: ReturnType<typeof createClient>) {
     try {
       const { data: { user }, error } = await supabase.auth.getUser()
       if (error || !user) {
         return
       }
-      // Only check premium in browser
-      if (typeof window !== 'undefined') {
-        const { checkPremiumStatusClient } = await import('@/lib/premium-client')
-        const status = await checkPremiumStatusClient(user.id)
-        setIsPremium(status.isPremium)
-      }
+      const { checkPremiumStatusClient } = await import('@/lib/premium-client')
+      const status = await checkPremiumStatusClient(user.id)
+      setIsPremium(status.isPremium)
     } catch (err) {
-      // Silently fail during prerender
-      if (typeof window !== 'undefined') {
-        console.error('Failed to check premium status:', err)
-      }
+      console.error('Failed to check premium status:', err)
     }
   }
 
-  async function loadGlimmers() {
+  async function loadGlimmers(supabase: ReturnType<typeof createClient>) {
     try {
       const { data: { user }, error: authError } = await supabase.auth.getUser()
       if (authError || !user) {
-        // Don't redirect during prerender
-        if (typeof window !== 'undefined') {
-          router.push('/login')
-        }
+        router.push('/login')
         return
       }
 
@@ -63,10 +57,7 @@ export default function GlimmersPage() {
       if (error) throw error
       setGlimmers(data || [])
     } catch (err: any) {
-      // Only set error if we're in the browser
-      if (typeof window !== 'undefined') {
-        setError(err.message)
-      }
+      setError(err.message)
     } finally {
       setLoading(false)
     }
@@ -88,6 +79,7 @@ export default function GlimmersPage() {
     }
 
     try {
+      const supabase = createClient()
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) {
         router.push('/login')
@@ -109,7 +101,8 @@ export default function GlimmersPage() {
       setNewGlimmerText('')
       setNewGlimmerEmoji('✨')
       setShowAddForm(false)
-      loadGlimmers()
+      const supabaseReload = createClient()
+      loadGlimmers(supabaseReload)
     } catch (err: any) {
       setError(err.message)
     }
@@ -117,13 +110,14 @@ export default function GlimmersPage() {
 
   async function handleTogglePin(id: string, currentPin: boolean) {
     try {
+      const supabase = createClient()
       const { error } = await supabase
         .from('glimmers')
         .update({ is_pinned: !currentPin })
         .eq('id', id)
 
       if (error) throw error
-      loadGlimmers()
+      loadGlimmers(supabase)
     } catch (err: any) {
       setError(err.message)
     }
@@ -133,13 +127,14 @@ export default function GlimmersPage() {
     if (!confirm('Are you sure you want to delete this glimmer?')) return
 
     try {
+      const supabase = createClient()
       const { error } = await supabase
         .from('glimmers')
         .delete()
         .eq('id', id)
 
       if (error) throw error
-      loadGlimmers()
+      loadGlimmers(supabase)
     } catch (err: any) {
       setError(err.message)
     }

@@ -9,7 +9,6 @@ type TimeRange = '7d' | '30d' | '90d'
 
 export default function InsightsPage() {
   const router = useRouter()
-  const supabase = createClient()
   const [isPremium, setIsPremium] = useState(false)
   const [loading, setLoading] = useState(true)
   const [timeRange, setTimeRange] = useState<TimeRange>('30d')
@@ -17,7 +16,11 @@ export default function InsightsPage() {
   const [practiceData, setPracticeData] = useState<any[]>([])
 
   useEffect(() => {
+    // Only run in browser
+    if (typeof window === 'undefined') return
+    
     async function loadData() {
+      const supabase = createClient()
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) {
         router.push('/login')
