@@ -15,7 +15,6 @@ const NEEDS = [
 
 export default function BasicNeedsJournalPage() {
   const router = useRouter()
-  const supabase = createClient()
   const [isPremium, setIsPremium] = useState(false)
   const [loading, setLoading] = useState(true)
   const [needs, setNeeds] = useState<Record<string, { answer: string; details: string }>>({})
@@ -23,7 +22,11 @@ export default function BasicNeedsJournalPage() {
   const [saving, setSaving] = useState(false)
 
   useEffect(() => {
+    // Only run in browser
+    if (typeof window === 'undefined') return
+    
     async function checkPremium() {
+      const supabase = createClient()
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
         const { checkPremiumStatusClient } = await import('@/lib/premium-client')
@@ -64,6 +67,7 @@ export default function BasicNeedsJournalPage() {
     setSaving(true)
 
     try {
+      const supabase = createClient()
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) {
         router.push('/login')
