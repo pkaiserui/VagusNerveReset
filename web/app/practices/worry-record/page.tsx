@@ -7,7 +7,6 @@ import Link from 'next/link'
 
 export default function WorryRecordPage() {
   const router = useRouter()
-  const supabase = createClient()
   const [isPremium, setIsPremium] = useState(false)
   const [loading, setLoading] = useState(true)
   const [worryText, setWorryText] = useState('')
@@ -18,7 +17,11 @@ export default function WorryRecordPage() {
   const [saving, setSaving] = useState(false)
 
   useEffect(() => {
+    // Only run in browser
+    if (typeof window === 'undefined') return
+    
     async function checkPremium() {
+      const supabase = createClient()
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
         const { checkPremiumStatusClient } = await import('@/lib/premium-client')
@@ -58,6 +61,7 @@ export default function WorryRecordPage() {
     setSaving(true)
 
     try {
+      const supabase = createClient()
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) {
         router.push('/login')

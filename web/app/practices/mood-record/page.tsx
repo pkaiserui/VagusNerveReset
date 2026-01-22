@@ -37,7 +37,6 @@ const STATES: { value: NervousSystemState; label: string }[] = [
 
 export default function MoodRecordPage() {
   const router = useRouter()
-  const supabase = createClient()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -69,6 +68,7 @@ export default function MoodRecordPage() {
     setError(null)
 
     try {
+      const supabase = createClient()
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) {
         router.push('/login')

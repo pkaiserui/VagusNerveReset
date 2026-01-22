@@ -18,8 +18,6 @@ function ContainmentContent() {
   )
   const [isTimerActive, setIsTimerActive] = useState(false)
 
-  const supabase = createClient()
-
   const handleStartPractice = (practice: typeof CONTAINMENT_PRACTICES[0]) => {
     setSelectedPractice(practice)
     setIsTimerActive(true)
@@ -33,6 +31,7 @@ function ContainmentContent() {
     if (!selectedPractice) return
 
     try {
+      const supabase = createClient()
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) {
         router.push('/login')

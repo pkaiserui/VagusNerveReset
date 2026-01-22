@@ -14,8 +14,6 @@ export default function BodyExercisePage() {
   const [selectedPractice, setSelectedPractice] = useState<typeof BODY_EXERCISES[0] | null>(null)
   const [isTimerActive, setIsTimerActive] = useState(false)
 
-  const supabase = createClient()
-
   const handleStartPractice = (practice: typeof BODY_EXERCISES[0]) => {
     setSelectedPractice(practice)
     setIsTimerActive(true)
@@ -29,6 +27,7 @@ export default function BodyExercisePage() {
     if (!selectedPractice) return
 
     try {
+      const supabase = createClient()
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) {
         router.push('/login')

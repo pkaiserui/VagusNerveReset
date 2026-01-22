@@ -17,7 +17,6 @@ const BODY_LOCATIONS = [
 
 export default function EmotionRecognitionPage() {
   const router = useRouter()
-  const supabase = createClient()
   const [step, setStep] = useState(1)
   const [selectedEmotion, setSelectedEmotion] = useState('')
   const [bodyLocation, setBodyLocation] = useState('')
@@ -35,6 +34,7 @@ export default function EmotionRecognitionPage() {
 
   const handleTimerComplete = async (duration: number) => {
     try {
+      const supabase = createClient()
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) {
         router.push('/login')

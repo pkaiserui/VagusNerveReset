@@ -16,11 +16,13 @@ export default function RegulatingResourcePage() {
   const [isPremium, setIsPremium] = useState(false)
   const [loading, setLoading] = useState(true)
 
-  const supabase = createClient()
-
   // Check premium status (includes 14-day trial)
   useEffect(() => {
+    // Only run in browser
+    if (typeof window === 'undefined') return
+    
     async function checkPremium() {
+      const supabase = createClient()
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
         const { checkPremiumStatusClient } = await import('@/lib/premium-client')
@@ -49,6 +51,7 @@ export default function RegulatingResourcePage() {
     if (!selectedPractice) return
 
     try {
+      const supabase = createClient()
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) {
         router.push('/login')
