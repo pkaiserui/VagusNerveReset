@@ -33,11 +33,14 @@ export default function SignupPage() {
 
     const supabase = createClient()
 
+    // Use production URL from env if available, otherwise use current origin
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin
+
     const { error } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
+        emailRedirectTo: `${siteUrl}/auth/callback`,
       },
     })
 
