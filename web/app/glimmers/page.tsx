@@ -23,19 +23,33 @@ export default function GlimmersPage() {
   }, [])
 
   async function checkPremium() {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (user) {
-      const { checkPremiumStatusClient } = await import('@/lib/premium-client')
-      const status = await checkPremiumStatusClient(user.id)
-      setIsPremium(status.isPremium)
+    try {
+      const { data: { user }, error } = await supabase.auth.getUser()
+      if (error || !user) {
+        return
+      }
+      // Only check premium in browser
+      if (typeof window !== 'undefined') {
+        const { checkPremiumStatusClient } = await import('@/lib/premium-client')
+        const status = await checkPremiumStatusClient(user.id)
+        setIsPremium(status.isPremium)
+      }
+    } catch (err) {
+      // Silently fail during prerender
+      if (typeof window !== 'undefined') {
+        console.error('Failed to check premium status:', err)
+      }
     }
   }
 
   async function loadGlimmers() {
     try {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) {
-        router.push('/login')
+      const { data: { user }, error: authError } = await supabase.auth.getUser()
+      if (authError || !user) {
+        // Don't redirect during prerender
+        if (typeof window !== 'undefined') {
+          router.push('/login')
+        }
         return
       }
 
@@ -49,7 +63,10 @@ export default function GlimmersPage() {
       if (error) throw error
       setGlimmers(data || [])
     } catch (err: any) {
-      setError(err.message)
+      // Only set error if we're in the browser
+      if (typeof window !== 'undefined') {
+        setError(err.message)
+      }
     } finally {
       setLoading(false)
     }
